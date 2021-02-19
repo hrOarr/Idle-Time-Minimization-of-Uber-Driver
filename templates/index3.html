@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Leaflet Cluster</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.css" />
+    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.Default.css" />
+ 
+    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'></script>
+    <script type='text/javascript' src='http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js'></script>
+    <script type='text/javascript' src='http://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/leaflet.markercluster.js'></script>
+
+    <script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=Ayt9xCnOQZKAPVuUeH5OTSsAI3Hzk0yS"></script>
+    <script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-routing.js?key=Ayt9xCnOQZKAPVuUeH5OTSsAI3Hzk0yS"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  </head>
+
+  {% csrf_token %}
+ 
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-10">
+          <div id="map" style="margin-left: -50px; margin-top: 30px; height: 600px; border: 1px solid #AAA;">
+            
+          </div>
+          <div style="margin-top: 10px; text-align: center;"><h5>Route directions(Narrative)</h5></div>
+          <div id="route-narrative" style="font-size: 20px;margin-bottom: 10px;"></div>
+        </div>
+        <div class="col-md-2">
+          <form id="myForm" style="margin-top: 30px;margin-left: 30px;">
+            {% csrf_token %}
+    <div class="button dropdown">
+      <select name="selected" required="required" id="hourSelector">
+        <option selected>Select Hour</option>
+         <option value="1">1</option>
+         <option value="2">2</option>
+         <option value="3">3</option>
+         <option value="15">15</option>
+
+      </select>
+    </div>
+  </form>
+        </div>
+      </div>
+    </div>
+
+
+    <script type="text/javascript">
+      $(function() {
+    // when select changes
+    $('#hourSelector').on('change', function() {
+
+         var hour = -1;
+        if($(this).val()!="Select Hour")hour=$(this).val();
+
+        // send data to your endpoint
+        $.ajax({
+            url: '/',
+            method: 'GET',
+            data: {
+              hour: hour,
+            },
+            dataType: 'json',
+            success: function(data) {
+               var msg = data;
+               markers = msg.markers;
+               console.log(markers);
+          lat = msg.sourceLat, lon = msg.sourceLon;
+          var container = L.DomUtil.get('map');
+      if(container != null){
+        container._leaflet_id = null;
+      }
+          init_map(lat,lon,markers);
+            }
+        });
+    });
+});
+    </script>
+
+
+ 
+    <script type='text/javascript'>
+      
+      var markers = JSON.parse('{{ markers|escapejs }}');
+      var lat = JSON.parse('{{ sourceLat|escapejs }}'), lon = JSON.parse('{{ sourceLon|escapejs }}');
+      console.log(markers)
+
+      function _call(lat,lon){
+        $.ajax(
+        {
+          type: 'GET',
+          url: '/',
+          data: {
+            sourceLat: lat,
+            sourceLon: lon
+          },
+          success: function(data){
+            var msg = $.parseJSON(data);
+            lat = msg.sourceLat, lon = msg.sourceLon;
+            init_map(lat,lon,markers);
+          }
+        });
+      }
+
+      function init_map(lat,lon,markers){
+      var map = L.map( 'map', {
+        layers: MQ.mapLayer(),
+        center: [lat, lon],
+        minZoom: 2,
+        zoom: 11
+      });
+
+      console.log(markers.length)
+
+      var controlLayers = L.control.layers( null, null, {
+        position: "topright",
+        collapsed: false
+      }).addTo(map);
+
+      var light = L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        subdomains: ['a','b','c']
+      }).addTo(map);
+
+      controlLayers.addBaseLayer(light, 'Carto Light basemap');
+
+      var terrain = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png', {
+        attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
+      }); 
+      controlLayers.addBaseLayer(terrain, 'Stamen Terrain basemap');
+
+      var markerClusters = L.markerClusterGroup();
+
+      for ( var i = 0; i < markers.length; ++i ){
+        var popup = markers[i].Hour;
+        if(markers[i].Lat==lat && markers[i].Lon==lon)continue;
+        var m = L.marker( [markers[i].Lat, markers[i].Lon] ).bindPopup( popup );
+        markerClusters.addLayer( m );
+      }
+
+      map.addLayer( markerClusters );
+      dir = MQ.routing.directions()
+      .on('success', function(data) {
+        var legs = data.route.legs,html = '',maneuvers,i;
+
+        if (legs && legs.length) {
+          maneuvers = legs[0].maneuvers;
+
+          for (i=0; i < maneuvers.length; i++) {
+            html += (i+1) + '. ';
+            html += maneuvers[i].narrative + '<br/>';
+          }
+
+          L.DomUtil.get('route-narrative').innerHTML = html;
+        }
+      });
+
+      dir.optimizedRoute({
+        locations: [
+        { latLng: { lat: lat, lng: lon } },
+        { latLng: { lat: markers[markers.length-1].Lat, lng: markers[markers.length-1].Lon } }
+        ]
+      });
+
+
+      CustomRouteLayer = MQ.Routing.RouteLayer.extend({
+        createStartMarker: function (location, stopNumber) {
+          var custom_icon;
+          var marker;
+
+          custom_icon = L.icon({
+            iconUrl: 'https://www.mapquestapi.com/staticmap/geticon?uri=poi-red_1.png',
+            iconSize: [30, 39],
+            iconAnchor: [10, 29],
+            popupAnchor: [0, -29]
+          });
+
+          marker = L.marker(location.latLng, {icon: custom_icon}).addTo(map);
+          return marker;
+        },
+
+
+        createEndMarker: function (location, stopNumber) {
+          var custom_icon;
+          var marker;
+
+          custom_icon = L.icon({
+            iconUrl: 'https://www.mapquestapi.com/staticmap/geticon?uri=poi-blue_1.png',
+            iconSize: [30, 39],
+            iconAnchor: [10, 29],
+            popupAnchor: [0, -29]
+          });
+
+          marker = L.marker(location.latLng, {icon: custom_icon}).addTo(map);
+          return marker;
+        }
+      });
+
+      map.addLayer(new CustomRouteLayer({
+        directions: dir,
+        fitBounds: true
+      }));
+
+
+      map.on('click', function(e) {
+        console.log("ok?")
+        map.off();
+        map.remove();
+        _call(e.latlng.lat,e.latlng.lng);
+      });
+    }
+
+    init_map(lat,lon,markers);
+
+
+    </script>
+
+  </body>
+</html>
