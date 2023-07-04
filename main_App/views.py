@@ -152,7 +152,7 @@ def queryAnswer(lat, lon, hour, hol):
   For now working with small data set, if our algorithm works efficently
   we will increase the dataset
   """
-df=pd.read_csv('./../finalData(6000).csv')
+df=pd.read_csv('../finalData(6000).csv')
 
 """
   Creating an array so that we can use holiday and hour as index
