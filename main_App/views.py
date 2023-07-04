@@ -1,14 +1,10 @@
-from django.shortcuts import render
 import json
+
 import pandas as pd
 from django.http import HttpResponse
-from django.http import JsonResponse
-
-
-from sklearn.cluster import KMeans
-from matplotlib import pyplot as plt
+from django.shortcuts import render
 from rtree import index
-
+from sklearn.cluster import KMeans
 
 a=[[],[]]
 cluster=[[],[]]
@@ -156,7 +152,7 @@ def queryAnswer(lat, lon, hour, hol):
   For now working with small data set, if our algorithm works efficently
   we will increase the dataset
   """
-df=pd.read_csv('F:/wamp64/www/driver_scheduling_optimization/finalData(6000).csv')
+df=pd.read_csv('./../finalData(6000).csv')
 
 """
   Creating an array so that we can use holiday and hour as index
