@@ -1,4 +1,5 @@
 import json
+import os
 
 import pandas as pd
 from django.http import HttpResponse
@@ -143,7 +144,8 @@ def queryAnswer(lat, lon, hour, hol):
   For now working with small data set, if our algorithm works efficently
   we will increase the dataset
   """
-df = pd.read_csv('../finalData(6000).csv')
+current_dir = os.getcwd()
+df = pd.read_csv(os.path.abspath(os.path.join(current_dir, './finalData(6000).csv')))
 
 """
   Creating an array so that we can use holiday and hour as index
@@ -167,7 +169,7 @@ def index(request):
     sourceLat = df['Lat'].iloc[0]
     sourceLon = df['Lon'].iloc[0]
 
-    if request.is_ajax():
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         lat = request.GET.get('sourceLat')
         lon = request.GET.get('sourceLon')
         hour = None
