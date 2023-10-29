@@ -1,0 +1,64 @@
+.lclass {
+    display: inline-block;
+    position: relative;
+    padding-left: 29px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    color: #111;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.lclass input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom radio button */
+.sclass {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 25px;
+    width: 25px;
+    background-color: darksalmon;
+    border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.lclass:hover input ~ .sclass {
+    background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.lclass input:checked ~ .sclass {
+    background-color: #2196F3;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.sclass:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.lclass input:checked ~ .sclass:after {
+    display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.lclass .sclass:after {
+    top: 9px;
+    left: 9px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+}

@@ -4,21 +4,19 @@
     <title>Idle Time Minimization of Uber Driver</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
+    <link rel="stylesheet" href="index.css">
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css"/>
     <link rel="stylesheet" type="text/css"
-          href="http://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.css"/>
+          href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.css"/>
     <link rel="stylesheet" type="text/css"
-          href="http://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.Default.css"/>
+          href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.Default.css"/>
 
-    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'></script>
-
-
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
-    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-
-    <link rel="stylesheet" href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.css" />
-    <link rel="stylesheet" href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css" />
-    <script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js"></script>
+    <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+    <script type='text/javascript'
+            src='https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/leaflet.markercluster.js'></script>
 
     <script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=bfDs1fU8PCYTn2ic3L6oaEQMEQuOXqc1"></script>
     <script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-routing.js?key=bfDs1fU8PCYTn2ic3L6oaEQMEQuOXqc1"></script>
@@ -27,6 +25,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </head>
+
 
 <style type="text/css">
     .lclass {
@@ -97,24 +96,24 @@
 
 {% csrf_token %}
 
-<body style="background-color: #f2f9ff;">
+<body style="background-color: #f7f9fa;">
 <div class="container">
-    <h2 style="text-align: center;margin-top: 20px;">Idle Time Minimization of Uber Driver</h2>
+    <h2 style="text-align: center;margin-top: 20px;text-decoration: underline;color: #06173d">Idle Time Minimization of Uber
+        Driver</h2>
     <div class="row">
         <div class="col-md-10">
             <div id="time-distance"
                  style="margin-top: 30px;text-align: right;font-weight: 700;color: #111;font-size: 16px;">
-
             </div>
-            <div id="map" style="margin-left: -50px; margin-top: 10px; height: 600px; border: 1px solid #AAA;">
 
-            </div>
-            <div style="margin-top: 10px; text-align: center;"><h5 style="font-weight: 700;color: #111;">Route
+            <div id="map" style="margin-left: -50px; margin-top: 10px; height: 600px; border: 1px solid #AAA;"></div>
+
+            <div style="margin-top: 15px; text-align: center;"><h5 style="font-weight: 700;color: #111;">Route
                 directions(Narrative)</h5></div>
-            <div id="route-narrative" style="font-size: 15px;margin-bottom: 10px;font-weight: 700;color: #111;"></div>
+            <div id="route-narrative" style="font-size: 15px;margin-bottom: 20px;font-weight: 700;color: #111;"></div>
         </div>
-        <div class="col-md-2" style="text-align: center;">
-            <form id="myForm" style="margin-top: 130px;margin-left: 10px;font-weight: 700;color: #111;">
+        <div class="col-md-2" style="">
+            <form id="myForm" style="margin-top: 130px;font-weight: 700;color: #111;">
                 <h6 style="font-weight: 700;color: #111;">Select Hour</h6>
                 <div class="button dropdown">
                     <select name="selected" required="required" id="hourSelector">
@@ -146,38 +145,30 @@
                 </div>
             </form>
 
-            <fieldset class="hide" style=" margin-top : 20px; margin-left : 25px; ">
-
-                <h6 style="font-weight: 700;color: #111;">Holiday or Not?</h6>
+            <fieldset class="hide" style="margin-top : 20px;">
+                <h6 style="font-weight: 700;color: #111;">Holiday</h6>
                 <label class="lclass"><p> YES </p>
-
                     <input type="radio" name="cus_time_unit" value="1">
-
                     <span class="sclass"></span>
-
                 </label>
 
-                <label class="lclass"><p> NO </p>
-
+                <label class="lclass" style="margin-left: 10px"><p> NO </p>
                     <input type="radio" name="cus_time_unit" value="0" checked>
-
                     <span class="sclass"></span>
-
                 </label>
-
             </fieldset>
 
         </div>
     </div>
 </div>
 
-
 <script type="text/javascript">
 
-    var map = "";
+    let map = "";
+    let markers;
     $(document).ready(function () {
         $('.hide input[type="radio"]').click(function () {
-            var holiday = $(this).val();
+            const holiday = $(this).val();
             console.log(holiday)
             $.ajax({
                 url: '/',
@@ -189,8 +180,8 @@
                     var msg = $.parseJSON(data);
                     markers = JSON.parse(msg.markers);
                     console.log(markers);
-                    var lat = msg.sourceLat, lon = msg.sourceLon;
-                    var pointX = msg.pointX, pointY = msg.pointY;
+                    const lat = msg.sourceLat, lon = msg.sourceLon;
+                    const pointX = msg.pointX, pointY = msg.pointY;
                     map.off();
                     map.remove();
                     init_map(lat, lon, pointX, pointY, markers);
@@ -203,7 +194,7 @@
     $(function () {
         // when select changes
         $('#hourSelector').on('change', function () {
-            var hour = -1;
+            let hour = -1;
             if ($(this).val() != "Select Hour") hour = $(this).val();
 
             // send data to your endpoint
@@ -215,11 +206,11 @@
                 },
                 dataType: 'json',
                 success: function (data) {
-                    var msg = data;
+                    const msg = data;
                     markers = JSON.parse(msg.markers);
                     console.log(markers);
-                    var lat = msg.sourceLat, lon = msg.sourceLon;
-                    var pointX = msg.pointX, pointY = msg.pointY
+                    const lat = msg.sourceLat, lon = msg.sourceLon;
+                    const pointX = msg.pointX, pointY = msg.pointY;
                     map.off();
                     map.remove();
                     init_map(lat, lon, pointX, pointY, markers);
@@ -229,10 +220,10 @@
     });
 
 
-    var markers = JSON.parse('{{ markers|escapejs }}');
-    var lat = JSON.parse('{{ sourceLat|escapejs }}'), lon = JSON.parse('{{ sourceLon|escapejs }}');
+    markers = JSON.parse('{{ markers|escapejs }}');
+    const lat = JSON.parse('{{ sourceLat|escapejs }}'), lon = JSON.parse('{{ sourceLon|escapejs }}');
 
-    var pointX = '{{ pointX|escapejs }}', pointY = '{{ pointY|escapejs }}';
+    const pointX = '{{ pointX|escapejs }}', pointY = '{{ pointY|escapejs }}';
 
     function _call(lat, lon) {
         $.ajax(
@@ -244,9 +235,9 @@
                     sourceLon: lon
                 },
                 success: function (data) {
-                    var msg = $.parseJSON(data);
-                    var lat = msg.sourceLat, lon = msg.sourceLon;
-                    var pointX = msg.pointX, pointY = msg.pointY;
+                    const msg = $.parseJSON(data);
+                    const lat = msg.sourceLat, lon = msg.sourceLon;
+                    const pointX = msg.pointX, pointY = msg.pointY;
                     console.log(pointX)
                     console.log(pointY)
                     init_map(lat, lon, pointX, pointY, markers);
@@ -265,130 +256,125 @@
 
         console.log(markers.length)
 
-        var controlLayers = L.control.layers(null, null, {
+        const controlLayers = L.control.layers(null, null, {
             position: "topright",
             collapsed: false
         }).addTo(map);
-        console.log("One")
-        var light = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        const light = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             subdomains: ['a', 'b', 'c']
         }).addTo(map);
-        console.log("Two")
+
         controlLayers.addBaseLayer(light, 'Carto Light basemap');
 
-        var terrain = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png', {
+        const terrain = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png', {
             attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
         });
         controlLayers.addBaseLayer(terrain, 'Stamen Terrain basemap');
-        console.log("three")
-        var markerClusters = L.markerClusterGroup();
-        console.log("four")
-        for (var i = 0; i < markers.length; ++i) {
-            var popup = markers[i].Hour;
+
+        const markerClusters = L.markerClusterGroup();
+
+        for (let i = 0; i < markers.length; ++i) {
+            const popup = markers[i].Hour;
             if (markers[i].Lat == lat && markers[i].Lon == lon) continue;
-            console.log(markers[i].Lat)
-            console.log(markers[i].Lon)
-            var m = L.marker([markers[i].Lat, markers[i].Lon]).bindPopup(popup);
+            const m = L.marker([markers[i].Lat, markers[i].Lon]).bindPopup(popup);
             markerClusters.addLayer(m);
         }
 
         map.addLayer(markerClusters);
 
-        var dir = MQ.routing.directions()
-            .on('success', function (data) {
-                console.log(data)
-                var legs = data.route.legs, html = '', maneuvers, i, html2 = '';
-                // var sum = 0;
+        const dir = MQ.routing.directions().on('success', function (data) {
+            console.log(data)
+            let legs = data.route.legs, html = '', maneuvers, i, html2 = '';
+            // var sum = 0;
 
-                if (legs && legs.length) {
-                    maneuvers = legs[0].maneuvers;
-
-                    for (i = 0; i < maneuvers.length; i++) {
-                        html += (i + 1) + '. ';
-                        html += maneuvers[i].narrative + " (" + (maneuvers[i].distance * 1.6).toFixed(3) + " km(s))" + '<br/>';
-                        // sum += maneuvers[i].distance;
-                    }
-
-                    L.DomUtil.get('route-narrative').innerHTML = html;
+            if (legs && legs.length) {
+                maneuvers = legs[0].maneuvers;
+                for (i = 0; i < maneuvers.length; i++) {
+                    html += '<span style="color: #0572ad">' + (i + 1) + '</span>' + '. ';
+                    html += maneuvers[i].narrative + " (" + (maneuvers[i].distance * 1.6).toFixed(3) + " km(s))" + '<br/>';
                 }
+                L.DomUtil.get('route-narrative').innerHTML = html;
+            }
 
-                var street = "", city = "", country = "", street2 = "", city2 = "", country = "";
-                if (data.route.locations != undefined) {
-                    street = data.route.locations[0].street;
-                    city = data.route.locations[0].adminArea5;
-                    country = data.route.locations[0].adminArea1;
+            let street = "", city = "", country = "", street2 = "", city2 = "", country2 = "";
+            if (data.route.locations != undefined) {
+                street = data.route.locations[0].street;
+                city = data.route.locations[0].adminArea5;
+                country = data.route.locations[0].adminArea1;
 
-                    street2 = data.route.locations[1].street;
-                    city2 = data.route.locations[1].adminArea5;
-                    country2 = data.route.locations[1].adminArea1;
-                }
+                street2 = data.route.locations[1].street;
+                city2 = data.route.locations[1].adminArea5;
+                country2 = data.route.locations[1].adminArea1;
+            }
 
-                html2 += "From(A): ";
-                var f = 0;
-                if (street != "") {
-                    html2 += street;
-                    f = 1;
-                }
-                if (city != "") {
-                    if (street != "") html2 += ",";
-                    html2 += city;
-                    f = 1;
-                }
-                if (country != "") {
-                    if (street != "" || city != "") html2 += ",";
-                    html2 += country;
-                    f = 1;
-                }
-                if (f) html2 += "<br/>";
+            html2 += "From (A): ";
+            let f = 0;
+            if (street != "") {
+                html2 += street;
+                f = 1;
+            }
+            if (city != "") {
+                if (street != "") html2 += ",";
+                html2 += city;
+                f = 1;
+            }
+            if (country != "") {
+                if (street != "" || city != "") html2 += ",";
+                html2 += country;
+                f = 1;
+            }
+            if (f) html2 += "<br/>";
 
-                html2 += "To(B): ";
-                if (street2 != "") {
-                    html2 += street2;
-                    f = 1;
-                }
-                if (city2 != "") {
-                    if (street2 != "") html2 += ",";
-                    html2 += city2;
-                    f = 1;
-                }
-                if (country2 != "") {
-                    if (street2 != "" || city2 != "") html2 += ",";
-                    html2 += country2;
-                    f = 1;
-                }
-                if (f) html2 += "<br/>";
+            html2 += "To (B): ";
+            if (street2 != "") {
+                html2 += street2;
+                f = 1;
+            }
+            if (city2 != "") {
+                if (street2 != "") html2 += ",";
+                html2 += city2;
+                f = 1;
+            }
+            if (country2 != "") {
+                if (street2 != "" || city2 != "") html2 += ",";
+                html2 += country2;
+                f = 1;
+            }
+            if (f) html2 += "<br/>";
 
-                var f2 = 0;
+            let f2 = 0;
 
-                var time = data.route.time;
-                if (time != undefined) {
-                    var hour = parseInt(time / 3600);
-                    time -= (3600 * hour);
-                    var minute = parseInt(time / 60);
-                    time -= (60 * minute);
-                    var second = time;
-                    html2 += "Route duration : ";
-                    if (hour != 0) html2 += hour + " hour(s) ";
-                    if (minute != 0) html2 += minute + " minute(s) ";
-                    if (second != 0) html2 += second + " second(s)";
-                    f2 = 1;
+            let time = data.route.time;
+            if (time != undefined) {
+                const hour = parseInt(time / 3600);
+                time -= (3600 * hour);
+                const minute = parseInt(time / 60);
+                time -= (60 * minute);
+                const second = time;
+                html2 += "Route duration : ";
+                html2 += '<span style="color: #14918f;">';
+                if (hour != 0) html2 += hour + " hour(s) ";
+                if (minute != 0) html2 += minute + " minute(s) ";
+                if (second != 0) html2 += second + " second(s)";
+                html2 += '</span>';
+                f2 = 1;
+            }
+            let distance = data.route.distance;
+            if (distance != undefined) {
+                distance *= 1.6;
+                html2 += "<br/>";
+                html2 += "Distance: ";
+                if (distance != 0) {
+                    html2 += '<span style="color: #14918f;">' + distance.toFixed(3) + " km(s)" + '</span>';
                 }
-                var distance = data.route.distance;
-                if (distance != undefined) {
-                    distance *= 1.6;
-                    html2 += "<br/>";
-                    html2 += "Distance: ";
-                    if (distance != 0) {
-                        html2 += distance.toFixed(3) + " km(s)";
-                    }
-                    f2 = 1;
-                }
-                if (html2 != '' && f && f2) L.DomUtil.get('time-distance').innerHTML = html2;
+                f2 = 1;
+            }
+            if (html2 != '' && f && f2) L.DomUtil.get('time-distance').innerHTML = html2;
 
-            });
+        });
 
-        dir.optimizedRoute({
+        dir.route({
             locations: [
                 {latLng: {lat: lat, lng: lon}},
                 {latLng: {lat: pointX, lng: pointY}}

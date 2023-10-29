@@ -25,7 +25,7 @@ SECRET_KEY = 'ox96h*^v!1ykz9)z%8jhe_oas&88o-g*4m9cfs+alm(tiy66wb'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_ORIGINS = ['*']
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -82,9 +82,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'uber_driver_scheduling',
         'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3308',
+        'PASSWORD': 'qwerty@#!',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
         'OPTIONS': {
             'sql_mode': 'traditional',
         }

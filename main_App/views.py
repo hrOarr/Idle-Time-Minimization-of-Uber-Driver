@@ -141,11 +141,11 @@ def queryAnswer(lat, lon, hour, hol):
 
 
 """
-  For now working with small data set, if our algorithm works efficently
+  For now working with small data set, if our algorithm works efficiently
   we will increase the dataset
   """
 current_dir = os.getcwd()
-df = pd.read_csv(os.path.abspath(os.path.join(current_dir, './finalData(6000).csv')))
+df = pd.read_csv(os.path.abspath(os.path.join(current_dir, './finalData(60000).csv')))
 
 """
   Creating an array so that we can use holiday and hour as index
